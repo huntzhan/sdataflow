@@ -3,7 +3,7 @@ from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
 from pytest import fixture
-from sdataflow.ast.lexer import create_lexer
+from sdataflow.lang.lexer import create_lexer
 
 
 @fixture
