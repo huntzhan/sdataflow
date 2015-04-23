@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-"""A simple language to describe dataflow between entries, implemented in Python."""
 
 from sdataflow import metadata
 

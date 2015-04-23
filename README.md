@@ -73,11 +73,11 @@ After laoding all user defined dataflow, there are several steps of analysis wil
 ## Lexical Rules
 
 ```
-ARROW             : re.escape('-->')
-TYPED_ARROW_LEFT  : re.escape('--')
-TYPED_ARROW_RIGHT : re.escape('-->')
-ENTRY             : r'\w'
-OUTCOME_TYPE      : r'\[\w\]'
+ARROW          : re.escape('-->')
+DOUBLE_HYPHENS : re.escape('--')
+BRACKET_LEFT   : re.escape('[')
+BRACKET_RIGHT  : re.escape(']')
+ID             : r'\w+'
 ```
 
 The effect of above rules would be equivalent as if passing such rules to Python's `re` module with the flag `UNICODE` being set.
@@ -94,14 +94,16 @@ single_stat : entry_to_entry
             | entry_to_outcome_type
             | outcome_type_to_entry
             
-entry_to_entry : ENTRY general_arrow ENTRY
+entry_to_entry : ID general_arrow ID
 
 general_arrow : ARROW
-              | TYPED_ARROW_LEFT OUTCOME_TYPE TYPED_ARROW_RIGHT
-              
-entry_to_outcome_type : ENTRY ARROW OUTCOME_TYPE
+              | DOUBLE_HYPHENS outcome_type ARROW
 
-outcome_type_to_entry : OUTCOME_TYPE ARROW ENTRY
+outcome_type : BRACKET_LEFT ID BRACKET_RIGHT
+              
+entry_to_outcome_type : ID ARROW outcome_type
+
+outcome_type_to_entry : outcome_type ARROW ID
 ```
 
 # API
