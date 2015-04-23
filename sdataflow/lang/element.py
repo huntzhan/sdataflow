@@ -16,8 +16,23 @@ class InfoBase(object):
 
 
 class Entry(InfoBase):
-    pass
+
+    def __init__(self, name):
+        super(Entry, self).__init__(name)
+        # contains mapping from the name(a string) of outcome to a outcome
+        # object.
+        self.outcome_types = {}
+
+    def add_outcome_type(self, outcome_type):
+        self.outcome_types[outcome_type.name] = outcome_type
 
 
 class OutcomeType(InfoBase):
-    pass
+
+    def __init__(self, name):
+        super(OutcomeType, self).__init__(name)
+        # contains a set of entries that accept current type as input value.
+        self.entries = set()
+
+    def add_entry(self, entry):
+        self.entries.add(entry)
