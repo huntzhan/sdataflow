@@ -269,6 +269,7 @@ setup_dict = dict(
         'flake8==2.1.0',
         # dependencies of sdataflow.
         'ply',
+        'six',
     ],
     cmdclass={'test': TestAllCommand},
     zip_safe=False,  # don't use eggs

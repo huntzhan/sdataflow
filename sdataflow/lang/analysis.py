@@ -82,3 +82,8 @@ class DataFlow(object):
         for u in color.keys():
             if color[u] == WHITE:
                 DFS_visit(u)
+
+    def generate_linear_ordering(self):
+        self.build_DAG()
+        self.topology_sort()
+        return self.linear_ordering
