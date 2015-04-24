@@ -14,6 +14,9 @@ class InfoBase(object):
     def __repr__(self):
         return '<{0}: {1}>'.format(type(self).__name__, self.name)
 
+    def __hash__(self):
+        return id(self)
+
 
 class Entry(InfoBase):
 

@@ -103,5 +103,6 @@ target/
 *.swp
 
 devpy2/
+devpy3/
 generated_lextab.py
 generated_parsetab.py
