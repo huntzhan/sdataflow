@@ -26,6 +26,9 @@ class Entry(InfoBase):
     def add_outcome_type(self, outcome_type):
         self.outcome_types[outcome_type.name] = outcome_type
 
+    def get_adjacent_vertices(self):
+        return self.outcome_types.values()
+
 
 class OutcomeType(InfoBase):
 
@@ -36,3 +39,6 @@ class OutcomeType(InfoBase):
 
     def add_entry(self, entry):
         self.entries.add(entry)
+
+    def get_adjacent_vertices(self):
+        return self.entries
