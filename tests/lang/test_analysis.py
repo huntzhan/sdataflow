@@ -4,13 +4,13 @@ from __future__ import (division, absolute_import, print_function,
 
 import pytest
 from sdataflow.shared import Entry, OutcomeType
-from sdataflow.lang.analysis import DataFlow
+from sdataflow.lang.analysis import Dataflow
 from test_parser import parser, get_rules
 
 
 def prepare_dataflow(parser, doc):
     rules = get_rules(parser, doc)
-    df = DataFlow(rules)
+    df = Dataflow(rules)
     df.build_DAG()
     df.topology_sort()
     return df

@@ -5,7 +5,7 @@ from __future__ import (division, absolute_import, print_function,
 from sdataflow.shared import to_unicode
 from .lexer import create_lexer
 from .parser import create_parser
-from .analysis import DataFlow
+from .analysis import Dataflow
 
 
 __all__ = ['parse']
@@ -26,5 +26,5 @@ def parse(doc):
     rules = parser.parse(lexer=lexer)
 
     # analyze `rules`.
-    dataflow = DataFlow(rules)
+    dataflow = Dataflow(rules)
     return dataflow.generate_linear_ordering()

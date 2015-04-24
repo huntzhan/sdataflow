@@ -5,7 +5,7 @@ from __future__ import (division, absolute_import, print_function,
 from sdataflow.shared import Entry, OutcomeType
 
 
-class DataFlow(object):
+class Dataflow(object):
 
     def __init__(self, rules):
         self.rules = rules

@@ -273,15 +273,15 @@ setup_dict = dict(
     ],
     cmdclass={'test': TestAllCommand},
     zip_safe=False,  # don't use eggs
-    entry_points={
-        'console_scripts': [
-            'sdataflow_cli = sdataflow.main:entry_point'
-        ],
-        # if you have a gui, use this
-        # 'gui_scripts': [
-        #     'sdataflow_gui = sdataflow.gui:entry_point'
-        # ]
-    }
+    # entry_points={
+    #     'console_scripts': [
+    #         'sdataflow_cli = sdataflow.main:entry_point'
+    #     ],
+    #     # if you have a gui, use this
+    #     # 'gui_scripts': [
+    #     #     'sdataflow_gui = sdataflow.gui:entry_point'
+    #     # ]
+    # }
 )
 
 
