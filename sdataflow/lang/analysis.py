@@ -2,7 +2,7 @@
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
-from .element import Entry, OutcomeType
+from sdataflow.shared import Entry, OutcomeType
 
 
 class DataFlow(object):

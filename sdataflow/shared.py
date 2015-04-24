@@ -2,6 +2,19 @@
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
+from six import text_type, binary_type
+
+
+def to_unicode(doc):
+    if isinstance(doc, binary_type):
+        doc = doc.decode('utf-8')
+    elif isinstance(doc, text_type):
+        # it's good, do nothing.
+        pass
+    else:
+        doc = None
+    return doc
+
 
 class InfoBase(object):
 
@@ -25,6 +38,8 @@ class Entry(InfoBase):
         # contains mapping from the name(a string) of outcome to a outcome
         # object.
         self.outcome_types = {}
+        # container of input of callback.
+        self.input_data = []
 
     def add_outcome_type(self, outcome_type):
         self.outcome_types[outcome_type.name] = outcome_type
@@ -39,6 +54,8 @@ class OutcomeType(InfoBase):
         super(OutcomeType, self).__init__(name)
         # contains a set of entries that accept current type as input value.
         self.entries = set()
+        # cache of outcome.
+        self.data_cache = []
 
     def add_entry(self, entry):
         self.entries.add(entry)

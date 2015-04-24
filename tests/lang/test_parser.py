@@ -3,9 +3,9 @@ from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
 from pytest import fixture
+from sdataflow.shared import Entry, OutcomeType
 from sdataflow.lang.lexer import create_lexer
 from sdataflow.lang.parser import create_parser
-from sdataflow.lang.element import Entry, OutcomeType
 
 
 @fixture

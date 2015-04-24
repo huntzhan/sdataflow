@@ -4,8 +4,8 @@ from __future__ import (division, absolute_import, print_function,
 
 import os
 from ply.yacc import yacc
+from sdataflow.shared import Entry, OutcomeType
 from .lexer import tokens as lexer_tokens
-from .element import Entry, OutcomeType
 
 
 __all__ = ['create_parser']

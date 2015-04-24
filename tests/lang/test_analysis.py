@@ -3,7 +3,7 @@ from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
 import pytest
-from sdataflow.lang.element import Entry, OutcomeType
+from sdataflow.shared import Entry, OutcomeType
 from sdataflow.lang.analysis import DataFlow
 from test_parser import parser, get_rules
 

@@ -3,7 +3,7 @@ from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
 from sdataflow.lang import parse
-from sdataflow.lang.element import Entry, OutcomeType
+from sdataflow.shared import Entry, OutcomeType
 
 
 def test_parse_six_text_type():

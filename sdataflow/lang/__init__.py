@@ -2,7 +2,7 @@
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
-from six import text_type, binary_type
+from sdataflow.shared import to_unicode
 from .lexer import create_lexer
 from .parser import create_parser
 from .analysis import DataFlow
@@ -15,12 +15,8 @@ __all__ = ['parse']
 # output: linear ordering of dataflow.
 def parse(doc):
     # prepare `doc`.
-    if isinstance(doc, binary_type):
-        doc = doc.decode('utf-8')
-    elif isinstance(doc, text_type):
-        # it's good, do nothing.
-        pass
-    else:
+    doc = to_unicode(doc)
+    if doc is None:
         raise RuntimeError('parse: doc should be six.binary_type'
                            ' or six.text_type')
     # parse doc.
