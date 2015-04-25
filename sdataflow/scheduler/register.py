@@ -12,7 +12,7 @@ def hook_callbacks(linear_ordering, name_callback_mapping):
                              for name, entity in cache_mapping.items()}
     # collect entity from `linear_ordering`.
     entity_table = {e.name: e for e in linear_ordering
-                   if isinstance(e, Entity)}
+                    if isinstance(e, Entity)}
     # check.
     consistency_checker(entity_table, name_callback_mapping)
     # attach callback to entity of `entity_table`.
