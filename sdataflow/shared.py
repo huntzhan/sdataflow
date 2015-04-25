@@ -31,10 +31,10 @@ class InfoBase(object):
         return id(self)
 
 
-class Entry(InfoBase):
+class Entity(InfoBase):
 
     def __init__(self, name):
-        super(Entry, self).__init__(name)
+        super(Entity, self).__init__(name)
         # contains mapping from the name(a string) of outcome to a outcome
         # object.
         self.outcome_types = {}
@@ -52,13 +52,13 @@ class OutcomeType(InfoBase):
 
     def __init__(self, name):
         super(OutcomeType, self).__init__(name)
-        # contains a set of entries that accept current type as input value.
-        self.entries = set()
+        # contains a set of entities that accept current type as input value.
+        self.entities = set()
         # cache of outcome.
         self.data_cache = []
 
-    def add_entry(self, entry):
-        self.entries.add(entry)
+    def add_entity(self, entity):
+        self.entities.add(entity)
 
     def get_adjacent_vertices(self):
-        return self.entries
+        return self.entities

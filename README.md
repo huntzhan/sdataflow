@@ -1,4 +1,4 @@
-a small and simple language wihtin project [sblog][1].
+a small and simple language within project [sblog][1].
 
 [1]: https://github.com/haoxun/sblog
 
@@ -12,10 +12,10 @@ pip install sdataflow
 
 `sdataflow` provides:
 
-* A small and simple language to define the relation of entries. An `entry` is a logic unit defined by user(i.e. a data processing function), it generates some kind of `outcome` as a respond to some kind of input `outcome`(which might be genreated by other entry). Relations of entries forms a `dataflow`.
+* A small and simple language to define the relation of entries. An `entity` is a logic unit defined by user(i.e. a data processing function), it generates some kind of `outcome` as a respond to some kind of input `outcome`(which might be genreated by other Entity). Relations of entries forms a `dataflow`.
 * A scheduler automatically runs entries and ships outcome to its destination.
 
-
+entity
 # Language
 
 ## Tutorial
@@ -25,7 +25,7 @@ Let's start with a simplest case(**one-to-one** relation):
 ```
 A --> B
 ```
-where entry `B` accepts outcome of `A` as its input.
+where entity `B` accepts outcome of `A` as its input.
 
 To define a **one-to-more** or **more-to-one** relation:
 
@@ -42,7 +42,7 @@ D --> A
 ```
 where in the **one-to-more** case, copies of outcome of `A` could be passed to `B`, `C` and `D`. In the **more-to-one** case, outcomes of `B`, `C` and `D` would be passed to `A`.
 
-And here's the form of **outcome dispatching**, that is, a machanism of sending different kinds of outcome of an entry to different destinations. For instance, entry `A` genreates two kinds of outcome, say `[type1]` and `[type2]`, and pass outcomes of `[type1]` to `B`, outcomes of `[type2]` to `C`:
+And here's the form of **outcome dispatching**, that is, a machanism of sending different kinds of outcome of an entity to different destinations. For instance, entity `A` genreates two kinds of outcome, say `[type1]` and `[type2]`, and pass outcomes of `[type1]` to `B`, outcomes of `[type2]` to `C`:
 
 ```
 # one way.
@@ -69,12 +69,12 @@ B --> [type1]
 [type1] --> C
 
 ```
-where identifier embraced in brackets(i.e. `[type1]`) represents the type of outcome. In contrast to outcome dispatching, `A --> B` would simple pass outcome of `A`, with default type `A`(the name of entry generates the outcome), to `B`. Essentially, above form(statement contains brackets) overrides the type of outcome, and acts like a filter for outcome dispatching.
+where identifier embraced in brackets(i.e. `[type1]`) represents the type of outcome. In contrast to outcome dispatching, `A --> B` would simple pass outcome of `A`, with default type `A`(the name of entity generates the outcome), to `B`. Essentially, above form(statement contains brackets) overrides the type of outcome, and acts like a filter for outcome dispatching.
 
 After laoding all user defined dataflow, there are several steps of analysis will be applied to such dataflow:
 
 1. Build a DAG for dataflow. Break if error happens(i.e. syntax error, cyclic path).
-2. Apply topology sort to DAG to get the order of entry invocation.
+2. Apply topology sort to DAG to get the order of entity invocation.
 
 ## Lexical Rules
 
@@ -96,27 +96,27 @@ start : stats
 stats : stats single_stat
       | empty
       
-single_stat : entry_to_entry
-            | entry_to_outcome_type
-            | outcome_type_to_entry
+single_stat : entity_to_entity
+            | entity_to_outcome_type
+            | outcome_type_to_entity
             
-entry_to_entry : ID general_arrow ID
+entity_to_entity : ID general_arrow ID
 
 general_arrow : ARROW
               | DOUBLE_HYPHENS outcome_type ARROW
 
 outcome_type : BRACKET_LEFT ID BRACKET_RIGHT
               
-entry_to_outcome_type : ID ARROW outcome_type
+entity_to_outcome_type : ID ARROW outcome_type
 
-outcome_type_to_entry : outcome_type ARROW ID
+outcome_type_to_entity : outcome_type ARROW ID
 ```
 
 # API
 
 ## Form of Callback
 
-As mentioned above, an entry stands for a user defined logic unit. Hence, after defining the relations of entries in the language discussed aboved, user should defines a set of callbacks, corrensponding to each entry in the definition.
+As mentioned above, an entity stands for a user defined logic unit. Hence, after defining the relations of entries in the language discussed aboved, user should defines a set of callbacks, corrensponding to each entity in the definition.
 
 User can define two types of callback:
 

@@ -10,7 +10,7 @@ elif sys.version_info.major == 3:
     from inspect import getfullargspec as getargspec
 
 from copy import deepcopy
-from sdataflow.shared import Entry, OutcomeType
+from sdataflow.shared import Entity, OutcomeType
 
 
 # user can define two kinds of callback:
@@ -23,22 +23,22 @@ from sdataflow.shared import Entry, OutcomeType
 def scheduler(linear_ordering):
 
     for element in linear_ordering:
-        if isinstance(element, Entry):
-            run_callback_of_entry(element)
+        if isinstance(element, Entity):
+            run_callback_of_entity(element)
         elif isinstance(element, OutcomeType):
-            pass_outcome_to_entry(element)
+            pass_outcome_to_entity(element)
 
 
-def run_callback_of_entry(entry):
+def run_callback_of_entity(entity):
     # get outcome.
-    args_size = len(getargspec(entry.callback).args)
+    args_size = len(getargspec(entity.callback).args)
     if args_size == 0:
-        callback_outcome = entry.callback()
+        callback_outcome = entity.callback()
     elif args_size == 1:
-        callback_outcome = entry.callback(entry.input_data)
+        callback_outcome = entity.callback(entity.input_data)
     else:
         raise RuntimeError(
-            'Wrong args size of {0}.'.format(entry.callback.__name__))
+            'Wrong args size of {0}.'.format(entity.callback.__name__))
 
     # allow callback that return nothing.
     if callback_outcome is None:
@@ -46,16 +46,16 @@ def run_callback_of_entry(entry):
 
     # store outcome.
     for name, obj in callback_outcome:
-        outcome_type = entry.outcome_types.get(name, None)
+        outcome_type = entity.outcome_types.get(name, None)
         if outcome_type is None:
             msg_template = '{0} genreated wrong outcome type [{1}]'
-            raise RuntimeError(msg_template.format(entry, name))
+            raise RuntimeError(msg_template.format(entity, name))
         outcome_type.data_cache.append(
             (name, obj),
         )
 
 
-def pass_outcome_to_entry(outcome_type):
+def pass_outcome_to_entity(outcome_type):
     for pair in outcome_type.data_cache:
-        for entry in outcome_type.entries:
-            entry.input_data.append(deepcopy(pair))
+        for entity in outcome_type.entities:
+            entity.input_data.append(deepcopy(pair))

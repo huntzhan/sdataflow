@@ -4,7 +4,7 @@ from __future__ import (division, absolute_import, print_function,
 
 import os
 from ply.yacc import yacc
-from sdataflow.shared import Entry, OutcomeType
+from sdataflow.shared import Entity, OutcomeType
 from .lexer import tokens as lexer_tokens
 
 
@@ -16,9 +16,9 @@ tokens = lexer_tokens
 
 # Following CFGs would simply tranform user defined dataflow into a series of
 # 2-tuples. There are three kinds of 2-tuple:
-#   * (Entry, OutcomeType), equivalent to `Entry --> [OutcomeType]`.
-#   * (OutcomeType, Entry), equivalent to `[OutcomeType] --> Entry`.
-#   * (Entry, Entry), equivalent to 'Entry --> Entry`.
+#   * (Entity, OutcomeType), equivalent to `Entity --> [OutcomeType]`.
+#   * (OutcomeType, Entity), equivalent to `[OutcomeType] --> Entity`.
+#   * (Entity, Entity), equivalent to 'Entity --> Entity`.
 
 
 def add_stat(stats, stat):
@@ -41,22 +41,22 @@ def p_stats(p):
 
 
 def p_single_stat(p):
-    '''single_stat : entry_to_entry
-                   | entry_to_outcome_type
-                   | outcome_type_to_entry'''
+    '''single_stat : entity_to_entity
+                   | entity_to_outcome_type
+                   | outcome_type_to_entity'''
     p[0] = p[1]
 
 
-def p_entry_to_entry(p):
-    '''entry_to_entry : ID general_arrow ID'''
+def p_entity_to_entity(p):
+    '''entity_to_entity : ID general_arrow ID'''
     if p[2] is None:
         # `A --> B`.
-        p[0] = (Entry(p[1]), Entry(p[3]))
+        p[0] = (Entity(p[1]), Entity(p[3]))
     else:
         # `A --[type]--> B`.
         p[0] = [
-            (Entry(p[1]), p[2]),  # `A --> [type]`.
-            (p[2], Entry(p[3])),  # `[type] --> B`.
+            (Entity(p[1]), p[2]),  # `A --> [type]`.
+            (p[2], Entity(p[3])),  # `[type] --> B`.
         ]
 
 
@@ -74,14 +74,14 @@ def p_outcome_type(p):
     p[0] = OutcomeType(p[2])
 
 
-def p_entry_to_outcome_type(p):
-    '''entry_to_outcome_type : ID ARROW outcome_type'''
-    p[0] = (Entry(p[1]), p[3])
+def p_entity_to_outcome_type(p):
+    '''entity_to_outcome_type : ID ARROW outcome_type'''
+    p[0] = (Entity(p[1]), p[3])
 
 
-def p_outcome_type_to_entry(p):
-    '''outcome_type_to_entry : outcome_type ARROW ID'''
-    p[0] = (p[1], Entry(p[3]))
+def p_outcome_type_to_entity(p):
+    '''outcome_type_to_entity : outcome_type ARROW ID'''
+    p[0] = (p[1], Entity(p[3]))
 
 
 def p_error(p):

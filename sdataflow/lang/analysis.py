@@ -2,21 +2,21 @@
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
-from sdataflow.shared import Entry, OutcomeType
+from sdataflow.shared import Entity, OutcomeType
 
 
 class Dataflow(object):
 
     def __init__(self, rules):
         self.rules = rules
-        self.entry_table = {}
+        self.entity_table = {}
         self.outcome_type_table = {}
 
     def get_unique_element(self, element):
         # target table.
         element_table = None
-        if isinstance(element, Entry):
-            element_table = self.entry_table
+        if isinstance(element, Entity):
+            element_table = self.entity_table
         elif isinstance(element, OutcomeType):
             element_table = self.outcome_type_table
         else:
@@ -35,18 +35,18 @@ class Dataflow(object):
         for src, dst in self.rules:
             src = self.get_unique_element(src)
             dst = self.get_unique_element(dst)
-            if isinstance(src, Entry) and isinstance(dst, Entry):
-                # transform `EntryA --> EntryB` to
-                # `EntryA --> [EntryA]` and `[EntryA] --> EntryB`.
+            if isinstance(src, Entity) and isinstance(dst, Entity):
+                # transform `EntityA --> EntityB` to
+                # `EntityA --> [EntityA]` and `[EntityA] --> EntityB`.
                 outcome_type = self.get_unique_element(OutcomeType(src.name))
                 src.add_outcome_type(outcome_type)
-                outcome_type.add_entry(dst)
-            elif isinstance(src, Entry) and isinstance(dst, OutcomeType):
-                # add outcome_type to entry.
+                outcome_type.add_entity(dst)
+            elif isinstance(src, Entity) and isinstance(dst, OutcomeType):
+                # add outcome_type to entity.
                 src.add_outcome_type(dst)
-            elif isinstance(src, OutcomeType) and isinstance(dst, Entry):
-                # add entry to outcome_type.
-                src.add_entry(dst)
+            elif isinstance(src, OutcomeType) and isinstance(dst, Entity):
+                # add entity to outcome_type.
+                src.add_entity(dst)
             else:
                 raise RuntimeError('build_DAG')
 
@@ -58,8 +58,8 @@ class Dataflow(object):
 
         # dict for storing the color of vertices.
         color = {}
-        for entry in self.entry_table.values():
-            color[entry] = WHITE
+        for entity in self.entity_table.values():
+            color[entity] = WHITE
         for outcome_type in self.outcome_type_table.values():
             color[outcome_type] = WHITE
 
