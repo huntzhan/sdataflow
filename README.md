@@ -6,7 +6,7 @@ a small and simple language wihtin project [sblog][1].
 
 `sdataflow` provides:
 
-* A small and simple language to define the relation of entries. An `entry` is a logic unit defined by user(i.e. a data processing function), it generates some kind of `outcome` as a respond to some kind of input `outcome`(which might be genreated by other entry). All relations of a entry set forms a `dataflow`.
+* A small and simple language to define the relation of entries. An `entry` is a logic unit defined by user(i.e. a data processing function), it generates some kind of `outcome` as a respond to some kind of input `outcome`(which might be genreated by other entry). Relations of entries forms a `dataflow`.
 * A scheduler automatically runs entries and ships outcome to its destination.
 
 
@@ -110,13 +110,13 @@ outcome_type_to_entry : outcome_type ARROW ID
 
 ## Form of Callback
 
-As mentioned above, an entry stands for a user defined logic unit. Hence, after defining the relations of entries with the language discussed aboved, user should defines a set of callbacks, corrensponding to each entry in the definition.
+As mentioned above, an entry stands for a user defined logic unit. Hence, after defining the relations of entries in the language discussed aboved, user should defines a set of callbacks, corrensponding to each entry in the definition.
 
 User can define two types of callback:
 
 1. A **normal function** returns `None`(i.e. a function with no `return` statement), or an iterable object, of which the element is a (key, value) tuple, with key as the name of outcome type and value as user
 defined object.
-2. A generator yield the element same as (1).
+2. A generator yields the element same as (1).
 
 Input argument list of both types of callback could be:
 
@@ -173,7 +173,8 @@ class DataflowHandler
 Example:
 
 ```python
-from sdataflow import DataflowHandler, create_data_wrapper
+from sdataflow import DataflowHandler
+from sdataflow.scheduler import create_data_wrapper
 
 doc = ('A --[odd]--> B '
        'A --[even]--> C '
@@ -224,9 +225,6 @@ handler.run()
 ```
 
 In above example, `A` generates numbers in the range of 1 to 9, of which the odd numbers(1, 3, 5, 7, 9) are sent to `B`, the even numbers(2, 4, 6, 8) are sent to `C`. Then `B` removes number 1 and sends the rest(3, 5, 7, 9) to `D`, while `C` removes number 2 and sends the rest(4, 6, 8) to `D`. Finally, `D` receives outcomes of both `C` and `D`, and make sure that is equal to `set(range(3, 10))`.
-
-
-
 
 
 
