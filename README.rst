@@ -1,6 +1,13 @@
 a small and simple language wihtin project
 `sblog <https://github.com/haoxun/sblog>`__.
 
+Install
+=======
+
+::
+
+    pip install sdataflow
+
 Concepts
 ========
 
