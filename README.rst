@@ -133,4 +133,134 @@ CFGs
 API
 ===
 
-coming soon.
+Form of Callback
+----------------
+
+As mentioned above, an entry stands for a user defined logic unit.
+Hence, after defining the relations of entries with the language
+discussed aboved, user should defines a set of callbacks, corrensponding
+to each entry in the definition.
+
+User can define two types of callback:
+
+1. A **normal function** returns ``None``\ (i.e. a function with no
+   ``return`` statement), or an iterable object, of which the element is
+   a (key, value) tuple, with key as the name of outcome type and value
+   as user defined object.
+2. A generator yield the element same as (1).
+
+Input argument list of both types of callback could be:
+
+1. An empty list, meaning that such callback accept no data.
+2. An one-element list.
+
+Code fragment for illustration:
+
+.. code:: python
+
+    # normal function returns `None`, with empty argument list.
+    def func1():
+        pass
+
+
+    # normal function return `None`, with one-element argument list.
+    def func2(items):
+        for name_of_outcome_type, obj in items:
+            # do something.
+
+
+    # normal function return elements, with one-element argument list.
+    def func3(items):
+        # ignore `items`
+        data = [('some outcome type', i) for i in range(10)]
+        return data
+
+
+    # generator yield element, with one-element argument list.
+    def gen1(items):
+        # ignore `items`
+        for i in range(10):
+            yield 'some outcome type', i
+
+Note that the name of outcome type is the string embraced in
+brackets(\ **not** including the brackets).
+
+Register Callback
+-----------------
+
+``sdataflow`` provides a class ``DataflowHandler`` to parse ``doc``\ (a
+string represents the relations of entries), register callbacks and
+schedule the execution of callbacks.
+
+::
+
+    class DataflowHandler
+        __init__(self, doc, name_callback_mapping)
+            `doc`: unicode or utf-8 encoded binary data.
+            `name_callback_mapping`: a dict of (`name`, `callback`) pairs. `name`
+            could be unicode or utf-8 encoded binary data. `callback` is a function
+            or generator.
+        
+        run(self)
+            Automatically execute all registered callbacks.
+
+Example:
+
+.. code:: python
+
+    from sdataflow import DataflowHandler, create_data_wrapper
+
+    doc = ('A --[odd]--> B '
+           'A --[even]--> C '
+           'B --> D '
+           'C --> D ')
+
+    def a():
+        odd = create_data_wrapper('odd')
+        even = create_data_wrapper('even')
+        for i in range(1, 10):
+            if i % 2 == 0:
+                yield even(i)
+            else:
+                yield odd(i)
+
+    def b(items):
+        default = create_data_wrapper('B')
+        # remove 1.
+        for outcome_name, number in items:
+            if number == 1:
+                continue
+            yield default(number)
+
+    def c(items):
+        default = create_data_wrapper('C')
+        # remove 2.
+        for outcome_name, number in items:
+            if number == 2:
+                continue
+            yield default(number)
+
+    def d(items):
+        numbers = {i for _, i in items}
+        assert set(range(3, 10)) == numbers
+
+    name_callback_mapping = {
+        'A': a,
+        'B': b,
+        'C': c,
+        'D': d,
+    }
+
+    # parse `doc`, register `a`, `b`, `c`, `d`.
+    handler = DataflowHandler(doc, name_callback_mapping)
+
+    # execute callbacks.
+    handler.run()
+
+In above example, ``A`` generates numbers in the range of 1 to 9, of
+which the odd numbers(1, 3, 5, 7, 9) are sent to ``B``, the even
+numbers(2, 4, 6, 8) are sent to ``C``. Then ``B`` removes number 1 and
+sends the rest(3, 5, 7, 9) to ``D``, while ``C`` removes number 2 and
+sends the rest(4, 6, 8) to ``D``. Finally, ``D`` receives outcomes of
+both ``C`` and ``D``, and make sure that is equal to
+``set(range(3, 10))``.

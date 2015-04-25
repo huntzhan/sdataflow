@@ -2,10 +2,14 @@
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
-from sdataflow.shared import Entry
+from sdataflow.shared import to_unicode, Entry
 
 
 def hook_callbacks(linear_ordering, name_callback_mapping):
+    # deal with utf-8 binary.
+    cache_mapping = name_callback_mapping
+    name_callback_mapping = {to_unicode(name): entry
+                             for name, entry in cache_mapping.items()}
     # collect entry from `linear_ordering`.
     entry_table = {e.name: e for e in linear_ordering
                    if isinstance(e, Entry)}

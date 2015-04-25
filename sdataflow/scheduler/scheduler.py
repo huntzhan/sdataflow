@@ -13,7 +13,7 @@ from copy import deepcopy
 from sdataflow.shared import Entry, OutcomeType
 
 
-# user defined can define two kinds of callback:
+# user can define two kinds of callback:
 # 1. A normal function returns an iterable object, of which the element is a
 # (key, value) tuple, with key as the name of outcome type and value as user
 # defined object.

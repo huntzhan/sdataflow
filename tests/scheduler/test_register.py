@@ -26,6 +26,16 @@ def test_hook():
     assert getattr(linear_ordering[1], 'callback', None) is None
 
 
+def test_utf8():
+    linear_ordering = [Entry('中文')]
+    name_callback_mapping = {
+        b'\xe4\xb8\xad\xe6\x96\x87': callback_generator('match utf-8'),
+    }
+    hook_callbacks(linear_ordering, name_callback_mapping)
+
+    assert linear_ordering[0].callback() == 'match utf-8'
+
+
 def test_inconsistent_case1():
     linear_ordering = [Entry('A'), OutcomeType('B'), Entry('C')]
     # missing C.
