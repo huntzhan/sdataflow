@@ -3,7 +3,7 @@ from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
 import pytest
-from sdataflow.shared import Entity, OutcomeType
+from sdataflow.shared import Entity, Outcome
 from sdataflow.lang.analysis import Dataflow
 from test_parser import parser, get_rules
 
@@ -18,7 +18,7 @@ def prepare_dataflow(parser, doc):
 
 def get_tables(parser, doc):
     df = prepare_dataflow(parser, doc)
-    return df.entity_table, df.outcome_type_table
+    return df.entity_table, df.outcome_table
 
 
 def get_linear_ordering(parser, doc):
@@ -34,7 +34,7 @@ def test_transform(parser):
     OA = ot['A']
     assert len(et) == 2
     assert len(ot) == 1
-    assert A.outcome_types == {'A': OA}
+    assert A.outcomes == {'A': OA}
     assert OA.entities == set([B])
 
 
@@ -50,7 +50,7 @@ def test_one_to_more(parser):
     OA = ot['A']
     assert len(et) == 4
     assert len(ot) == 1
-    assert A.outcome_types == {'A': OA}
+    assert A.outcomes == {'A': OA}
     assert OA.entities == set([B, C, D])
 
 
@@ -67,9 +67,9 @@ def test_more_to_one(parser):
     Otype = ot['type']
     assert len(et) == 4
     assert len(ot) == 1
-    assert B.outcome_types == {'type': Otype}
-    assert C.outcome_types == {'type': Otype}
-    assert D.outcome_types == {'type': Otype}
+    assert B.outcomes == {'type': Otype}
+    assert C.outcomes == {'type': Otype}
+    assert D.outcomes == {'type': Otype}
     assert Otype.entities == set([A])
 
 
@@ -88,7 +88,7 @@ def test_cycle_case2(parser):
 def test_acyclic_case1(parser):
     doc = 'B --> C A --> B'
     assert [
-        Entity('A'), OutcomeType('A'),
-        Entity('B'), OutcomeType('B'),
+        Entity('A'), Outcome('A'),
+        Entity('B'), Outcome('B'),
         Entity('C'),
     ] == get_linear_ordering(parser, doc)

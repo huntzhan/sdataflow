@@ -37,21 +37,21 @@ class Entity(InfoBase):
         super(Entity, self).__init__(name)
         # contains mapping from the name(a string) of outcome to a outcome
         # object.
-        self.outcome_types = {}
+        self.outcomes = {}
         # container of input of callback.
         self.input_data = []
 
-    def add_outcome_type(self, outcome_type):
-        self.outcome_types[outcome_type.name] = outcome_type
+    def add_outcome(self, outcome):
+        self.outcomes[outcome.name] = outcome
 
     def get_adjacent_vertices(self):
-        return self.outcome_types.values()
+        return self.outcomes.values()
 
 
-class OutcomeType(InfoBase):
+class Outcome(InfoBase):
 
     def __init__(self, name):
-        super(OutcomeType, self).__init__(name)
+        super(Outcome, self).__init__(name)
         # contains a set of entities that accept current type as input value.
         self.entities = set()
         # cache of outcome.

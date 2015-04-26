@@ -10,7 +10,7 @@ elif sys.version_info.major == 3:
     from inspect import getfullargspec as getargspec
 
 from copy import deepcopy
-from sdataflow.shared import Entity, OutcomeType
+from sdataflow.shared import Entity, Outcome
 
 
 # user can define two kinds of callback:
@@ -25,7 +25,7 @@ def scheduler(linear_ordering):
     for element in linear_ordering:
         if isinstance(element, Entity):
             run_callback_of_entity(element)
-        elif isinstance(element, OutcomeType):
+        elif isinstance(element, Outcome):
             pass_outcome_to_entity(element)
 
 
@@ -46,16 +46,16 @@ def run_callback_of_entity(entity):
 
     # store outcome.
     for name, obj in callback_outcome:
-        outcome_type = entity.outcome_types.get(name, None)
-        if outcome_type is None:
+        outcome = entity.outcomes.get(name, None)
+        if outcome is None:
             msg_template = '{0} genreated wrong outcome type [{1}]'
             raise RuntimeError(msg_template.format(entity, name))
-        outcome_type.data_cache.append(
+        outcome.data_cache.append(
             (name, obj),
         )
 
 
-def pass_outcome_to_entity(outcome_type):
-    for pair in outcome_type.data_cache:
-        for entity in outcome_type.entities:
+def pass_outcome_to_entity(outcome):
+    for pair in outcome.data_cache:
+        for entity in outcome.entities:
             entity.input_data.append(deepcopy(pair))

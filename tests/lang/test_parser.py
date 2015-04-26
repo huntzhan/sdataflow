@@ -3,7 +3,7 @@ from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
 from pytest import fixture
-from sdataflow.shared import Entity, OutcomeType
+from sdataflow.shared import Entity, Outcome
 from sdataflow.lang.lexer import create_lexer
 from sdataflow.lang.parser import create_parser
 
@@ -25,22 +25,22 @@ def test_entity_to_entity(parser):
     assert [(Entity('A'), Entity('B'))] == get_rules(parser, doc)
 
 
-def test_entity_to_outcome_type(parser):
+def test_entity_to_outcome(parser):
     doc = 'A --> [type]'
-    assert [(Entity('A'), OutcomeType('type'))] == get_rules(parser, doc)
+    assert [(Entity('A'), Outcome('type'))] == get_rules(parser, doc)
 
 
-def test_outcome_type_to_entity(parser):
+def test_outcome_to_entity(parser):
     doc = '[type] --> A'
-    assert [(OutcomeType('type'), Entity('A'))] == get_rules(parser, doc)
+    assert [(Outcome('type'), Entity('A'))] == get_rules(parser, doc)
 
 
-def test_entity_to_entity_with_outcome_type(parser):
+def test_entity_to_entity_with_outcome(parser):
     doc = 'A --[type]--> B'
     print(get_rules(parser, doc))
     assert [
-        (Entity('A'), OutcomeType('type')),
-        (OutcomeType('type'), Entity('B')),
+        (Entity('A'), Outcome('type')),
+        (Outcome('type'), Entity('B')),
     ] == get_rules(parser, doc)
 
 
@@ -88,25 +88,25 @@ B --> [type1]
         (Entity('C'), Entity('A')),
         (Entity('D'), Entity('A')),
         # section 3.
-        (Entity('A'), OutcomeType('type1')),
-        (Entity('A'), OutcomeType('type2')),
-        (OutcomeType('type1'), Entity('B')),
-        (OutcomeType('type2'), Entity('C')),
+        (Entity('A'), Outcome('type1')),
+        (Entity('A'), Outcome('type2')),
+        (Outcome('type1'), Entity('B')),
+        (Outcome('type2'), Entity('C')),
         # section 4.
-        (Entity('A'), OutcomeType('type1')),
-        (OutcomeType('type1'), Entity('B')),
-        (Entity('A'), OutcomeType('type2')),
-        (OutcomeType('type2'), Entity('C')),
+        (Entity('A'), Outcome('type1')),
+        (Outcome('type1'), Entity('B')),
+        (Entity('A'), Outcome('type2')),
+        (Outcome('type2'), Entity('C')),
         # section 5.
-        (Entity('A'), OutcomeType('type1')),
-        (Entity('A'), OutcomeType('type2')),
-        (OutcomeType('type1'), Entity('B')),
-        (OutcomeType('type1'), Entity('C')),
-        (OutcomeType('type2'), Entity('D')),
-        (OutcomeType('type2'), Entity('E')),
+        (Entity('A'), Outcome('type1')),
+        (Entity('A'), Outcome('type2')),
+        (Outcome('type1'), Entity('B')),
+        (Outcome('type1'), Entity('C')),
+        (Outcome('type2'), Entity('D')),
+        (Outcome('type2'), Entity('E')),
         # section 6.
-        (Entity('A'), OutcomeType('type1')),
-        (Entity('B'), OutcomeType('type1')),
-        (OutcomeType('type1'), Entity('C')),
+        (Entity('A'), Outcome('type1')),
+        (Entity('B'), Outcome('type1')),
+        (Outcome('type1'), Entity('C')),
     ]
     assert expected_rules == get_rules(parser, doc)
