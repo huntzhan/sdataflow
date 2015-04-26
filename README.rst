@@ -154,15 +154,11 @@ Hence, after defining the relations of entities in the language
 discussed above, user should defines a set of callbacks, corresponding
 to each entity in the definition.
 
-User can define two types of callback:
-
-1. A **normal function** returns ``None``\ (i.e. a function with no
-   ``return`` statement), or an iterable object, of which the element is
-   a (key, value) tuple, with key as the name of outcome and value as
-   user defined object.
-2. A generator yields the element same as (1).
-
-Input argument list of both types of callback could be:
+A callback is a **callable**\ (function, generator, bound method) that
+returns ``None``\ (i.e. a function with no ``return`` statement), or an
+iterable object of which the element is a (key, value) tuple, with key
+as the name of outcome and value as user defined object. Argument list
+of such callable could be:
 
 1. An empty list, meaning that such callback accept no data.
 2. An one-element list.
@@ -194,6 +190,35 @@ Code fragment for illustration:
         # ignore `items`
         for i in range(10):
             yield 'some outcome name', i
+
+
+    class ExampleClass(object):
+
+        @classmethod
+        def method1(cls):
+            pass
+            
+        @classmethod   
+        def method2(cls, items):
+            pass
+
+        def method3(self):
+            pass
+            
+        def method4(self, items):
+            pass
+            
+
+    # class bound method, with empty argument list.
+    ExampleClass.method1
+    # class bound method, with one-element argument list.
+    ExampleClass.method2
+
+    example_instance = ExampleClass()
+    # class bound method, with empty argument list.
+    example_instance.method3
+    # class bound method, with one-element argument list.
+    example_instance.method4
 
 Note that the name of outcome is the string embraced in
 brackets(\ **not** including the brackets).

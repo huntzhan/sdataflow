@@ -2,13 +2,6 @@
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
-import sys
-# import inspect.getargspec(py2) or inspect.getfullargspec(py3)
-if sys.version_info.major == 2:
-    from inspect import getargspec
-elif sys.version_info.major == 3:
-    from inspect import getfullargspec as getargspec
-
 from copy import deepcopy
 from sdataflow.shared import Entity, Outcome
 
@@ -31,15 +24,7 @@ def scheduler(linear_ordering):
 
 def run_callback_of_entity(entity):
     # get outcome.
-    args_size = len(getargspec(entity.callback).args)
-    if args_size == 0:
-        callback_outcome = entity.callback()
-    elif args_size == 1:
-        callback_outcome = entity.callback(entity.input_data)
-    else:
-        raise RuntimeError(
-            'Wrong args size of {0}.'.format(entity.callback.__name__))
-
+    callback_outcome = entity.callback(entity.input_data)
     # allow callback that return nothing.
     if callback_outcome is None:
         return
@@ -47,9 +32,11 @@ def run_callback_of_entity(entity):
     # store outcome.
     for name, obj in callback_outcome:
         outcome = entity.outcomes.get(name, None)
+
         if outcome is None:
-            msg_template = '{0} genreated wrong outcome type [{1}]'
-            raise RuntimeError(msg_template.format(entity, name))
+            raise RuntimeError(
+                '{0} genreated wrong outcome type [{1}]'.format(entity, name))
+
         outcome.data_cache.append(
             (name, obj),
         )
