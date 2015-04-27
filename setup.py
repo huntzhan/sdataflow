@@ -259,6 +259,9 @@ setup_dict = dict(
         'Topic :: System :: Software Distribution',
     ],
     packages=find_packages(exclude=(TESTS_DIRECTORY,)),
+    package_data = {
+        metadata.package: ['debug/mermaid.full.js'],
+    },
     install_requires=[
         # your module dependencies
     ] + python_version_specific_requires,
