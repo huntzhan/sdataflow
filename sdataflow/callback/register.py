@@ -9,10 +9,21 @@ if sys.version_info.major == 2:
 elif sys.version_info.major == 3:
     from inspect import getfullargspec as getargspec
 
+from six import with_metaclass
 from sdataflow.shared import to_unicode, Entity
+from .helper import create_data_wrapper
 
 
-def hook_callbacks(linear_ordering, name_callback_mapping):
+def hook_callbacks(linear_ordering, name_callback_mapping=None):
+    name_callback_mapping = name_callback_mapping or {}
+    # merge callbacks from `name_callback_mapping` and
+    # `RegisteredCallbacks.name_callback_mapping`. If names conflicts,
+    # callback of `name_callback_mapping` should be chosen.
+    for name, callback in name_callback_mapping.items():
+        RegisteredCallbacks.name_callback_mapping[name] = callback
+    name_callback_mapping = RegisteredCallbacks.name_callback_mapping
+    RegisteredCallbacks.name_callback_mapping = {}
+
     # deal with utf-8 binary.
     cache_mapping = name_callback_mapping
     name_callback_mapping = {to_unicode(name): entity
@@ -81,3 +92,19 @@ def normalize_callback(callback):
         return zero_arg_callback
     else:
         return callback
+
+
+class RegisteredCallbacks(object):
+    name_callback_mapping = {}
+
+
+# normal function decorator.
+def register_callback(entity_name, *outcome_names):
+    def _decorator(callback):
+        RegisteredCallbacks.name_callback_mapping[entity_name] = callback
+        # inject data wrapper
+        for name in outcome_names:
+            if not hasattr(callback, name):
+                setattr(callback, name, create_data_wrapper(name))
+        return callback
+    return _decorator

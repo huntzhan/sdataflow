@@ -5,7 +5,7 @@ from __future__ import (division, absolute_import, print_function,
 import sys
 import pytest
 from sdataflow.shared import Entity, Outcome
-from sdataflow.callback import hook_callbacks
+from sdataflow.callback import hook_callbacks, register_callback
 
 
 def callback_generator(name):
@@ -171,3 +171,34 @@ def test_unbound_method():
     }
     with pytest.raises(RuntimeError):
         hook_callbacks(linear_ordering, name_callback_mapping)
+
+
+def test_function_decorator_registration():
+
+    @register_callback('A')
+    def zero_arg():
+        return 0
+
+    @register_callback('C')
+    def should_not_be_registered(items):
+        return 1
+
+    def one_arg(items):
+        return 42
+
+    linear_ordering = [Entity('A'), Outcome('B'), Entity('C')]
+    hook_callbacks(linear_ordering, {'C': one_arg})
+    assert linear_ordering[0].callback(None) == 0
+    assert linear_ordering[2].callback(None) == 42
+
+
+def test_function_decorator_code_injection():
+
+    @register_callback('A', 'type1', 'type2')
+    def func():
+        return func.type1(1), func.type2(2)
+
+    assert (
+        ('type1', 1),
+        ('type2', 2),
+    ) == func()
