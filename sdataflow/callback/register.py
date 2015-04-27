@@ -9,7 +9,6 @@ if sys.version_info.major == 2:
 elif sys.version_info.major == 3:
     from inspect import getfullargspec as getargspec
 
-from six import with_metaclass
 from sdataflow.shared import to_unicode, Entity
 from .helper import create_data_wrapper
 

@@ -223,21 +223,22 @@ Code fragment for illustration:
 Note that the name of outcome is the string embraced in
 brackets(\ **not** including the brackets).
 
-Register And Execute Callback
------------------------------
+All In One Interface
+--------------------
 
-``dataflow`` provides a class ``DataflowHandler`` to parse ``doc``\ (a
-string represents the relations of entities), register callbacks and
-schedule the execution of callbacks.
+``sdataflow`` provides a class ``sdataflow.DataflowHandler`` to parse
+``doc``\ (a string represents the relations of entities), register
+callbacks and schedule the execution of callbacks.
 
 ::
 
     class DataflowHandler
-        __init__(self, doc, name_callback_mapping)
+        __init__(self, doc, name_callback_mapping=None)
             `doc`: unicode or utf-8 encoded binary data.
             `name_callback_mapping`: a dict of (`name`, `callback`) pairs. `name`
             could be unicode or utf-8 encoded binary data. `callback` is a function
-            or generator.
+            or generator. `name_callback_mapping` could be `None`, since callback
+            can be registered by function decorator(see next section).
         
         run(self)
             Automatically execute all registered callbacks.
@@ -247,7 +248,7 @@ Example:
 .. code:: python
 
     from sdataflow import DataflowHandler
-    from sdataflow.scheduler import create_data_wrapper
+    from sdataflow.callback import create_data_wrapper
 
     doc = ('A --[odd]--> B '
            'A --[even]--> C '
@@ -303,3 +304,106 @@ sends the rest(3, 5, 7, 9) to ``D``, while ``C`` removes number 2 and
 sends the rest(4, 6, 8) to ``D``. Finally, ``D`` receives outcomes of
 both ``C`` and ``D``, and make sure that is equal to
 ``set(range(3, 10))``.
+
+Use Decorator To Register Normal Function
+-----------------------------------------
+
+``sdataflow.callback.register_callback`` is a function decorator with
+signature:
+
+::
+
+    register_callback(entity_name, *outcome_names)
+
+where ``entity_name`` could be an unicode or utf-8 encoded binary
+string, indicating the entity to which the function should be
+registered. If ``outcome_names`` is given, the decorator would inject
+several ``sdataflow.callback.create_data_wrapper`` generated data
+wrapper to the function being decorated.
+
+Example:
+
+.. code:: python
+
+    @register_callback('A')
+    def zero_arg():
+        return 0
+                                                               
+    @register_callback('C')
+    def one_arg(items):
+        return 1
+
+    DataflowHandler(doc)
+
+where ``zero_arg`` is registered to entity ``A``, ``one_arg`` is
+registered to entity ``B``. Note that as mentioned above, second
+parameter of ``DataflowHandler`` can be ignored.
+
+When names of decorator registered callback conflict with names of
+``name_callback_mapping``, the second parameter of ``DataflowHandler``,
+callbacks in ``name_callback_mapping`` will be accepted, and callbacks
+registered by function decorator will be discarded. For example:
+
+.. code:: python
+
+    @register_callback('A')
+    def zero_arg():
+        return 0
+                                         
+    @register_callback('C')
+    def should_not_be_registered(items):
+        return 1
+                                         
+    def one_arg(items):
+        return 42
+        
+    DataflowHandler(doc, {'C': one_arg})
+
+where ``one_arg`` will be registered instead of
+``should_not_be_registered``.
+
+Example of function injection:
+
+.. code:: python
+
+    @register_callback('A', 'type1', 'type2')
+    def func():
+        return func.type1(1), func.type2(2)
+                                              
+    assert (
+        ('type1', 1),
+        ('type2', 2),
+    ) == func()
+
+Be careful to apply ``register_callback`` to things other than
+``function``, let's say, you want to register a class method:
+
+.. code:: python
+
+    class Example(object):
+
+        # wrong, `classmethod` is not bound.
+        @register_callback('A')
+        @classmethod
+        def func(cls):
+            pass
+
+
+    # try following code instead.
+    register_callback('A')(Example.func)        
+
+Pure Interface of ``sdataflow`` Language
+----------------------------------------
+
+``sdataflow.lang.parse`` can be used to parse the definition of
+dataflow:
+
+::
+
+    parse(doc)
+        input: `doc` with type of six.binary_type or six.text_type.
+        output: linear ordering and root nodes of dataflow.
+
+``parse`` returns a 2-tuple, with the first element is a list of linear
+ordering of dataflow, and the second element is a list of root nodes of
+the forest.

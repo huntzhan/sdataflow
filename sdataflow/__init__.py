@@ -19,7 +19,7 @@ __copyright__ = metadata.copyright
 # merge of lang and scheduler.
 class DataflowHandler(object):
 
-    def __init__(self, doc, name_callback_mapping):
+    def __init__(self, doc, name_callback_mapping=None):
         self.linear_ordering, _ = parse(doc)
         hook_callbacks(self.linear_ordering, name_callback_mapping)
 
