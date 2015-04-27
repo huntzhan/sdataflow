@@ -12,7 +12,7 @@ __all__ = ['parse']
 
 
 # input: `doc` with type of six.binary_type or six.text_type.
-# output: linear ordering of dataflow.
+# output: linear ordering and root nodes of dataflow.
 def parse(doc):
     # prepare `doc`.
     doc = to_unicode(doc)
@@ -27,4 +27,4 @@ def parse(doc):
 
     # analyze `rules`.
     dataflow = Dataflow(rules)
-    return dataflow.generate_linear_ordering()
+    return dataflow.analyze()

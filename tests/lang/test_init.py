@@ -8,17 +8,19 @@ from sdataflow.shared import Entity, Outcome
 
 def test_parse_six_text_type():
     doc = 'B --> C A --> B'
+    lo, _ = parse(doc)
     assert [
         Entity('A'), Outcome('A'),
         Entity('B'), Outcome('B'),
         Entity('C'),
-    ] == parse(doc)
+    ] == lo
 
 
 def test_parse_six_binary_type():
     doc = b'B --> C A --> B'
+    lo, _ = parse(doc)
     assert [
         Entity('A'), Outcome('A'),
         Entity('B'), Outcome('B'),
         Entity('C'),
-    ] == parse(doc)
+    ] == lo

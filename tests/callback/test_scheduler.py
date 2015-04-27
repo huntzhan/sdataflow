@@ -8,7 +8,7 @@ from sdataflow.callback import hook_callbacks, scheduler, create_data_wrapper
 
 
 def run(doc, name_callback_mapping):
-    linear_ordering = parse(doc)
+    linear_ordering, _ = parse(doc)
     hook_callbacks(linear_ordering, name_callback_mapping)
     scheduler(linear_ordering)
 

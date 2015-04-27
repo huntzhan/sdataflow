@@ -11,8 +11,8 @@ from test_parser import parser, get_rules
 def prepare_dataflow(parser, doc):
     rules = get_rules(parser, doc)
     df = Dataflow(rules)
-    df.build_DAG()
-    df.topology_sort()
+    df._build_DAG()
+    df._topology_sort()
     return df
 
 
@@ -24,6 +24,19 @@ def get_tables(parser, doc):
 def get_linear_ordering(parser, doc):
     df = prepare_dataflow(parser, doc)
     return df.linear_ordering
+
+
+def get_roots(parser, doc):
+    df = prepare_dataflow(parser, doc)
+    return df.roots
+
+
+def check_roots(expected, actual):
+    # test type.
+    assert set([Entity]) == {type(e) for e in expected}
+    assert set([Entity]) == {type(e) for e in actual}
+    # test name.
+    assert {e.name for e in expected} == {e.name for e in actual}
 
 
 def test_transform(parser):
@@ -92,3 +105,26 @@ def test_acyclic_case1(parser):
         Entity('B'), Outcome('B'),
         Entity('C'),
     ] == get_linear_ordering(parser, doc)
+
+
+def test_roots_case1(parser):
+    doc = 'B --> C A --> B'
+    check_roots(
+        [Entity('A')],
+        get_roots(parser, doc),
+    )
+
+
+def test_roots_case2(parser):
+    doc = ('B --> [type] '
+           'C --> [type] '
+           'D --> [type] '
+           '[type] --> A ')
+    check_roots(
+        [
+            Entity('B'),
+            Entity('C'),
+            Entity('D'),
+        ],
+        get_roots(parser, doc),
+    )

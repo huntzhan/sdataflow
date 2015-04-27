@@ -20,7 +20,7 @@ __copyright__ = metadata.copyright
 class DataflowHandler(object):
 
     def __init__(self, doc, name_callback_mapping):
-        self.linear_ordering = parse(doc)
+        self.linear_ordering, _ = parse(doc)
         hook_callbacks(self.linear_ordering, name_callback_mapping)
 
     def run(self):

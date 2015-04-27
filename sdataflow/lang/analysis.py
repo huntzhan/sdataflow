@@ -12,7 +12,7 @@ class Dataflow(object):
         self.entity_table = {}
         self.outcome_table = {}
 
-    def get_unique_element(self, element):
+    def _get_unique_element(self, element):
         # target table.
         element_table = None
         if isinstance(element, Entity):
@@ -20,7 +20,7 @@ class Dataflow(object):
         elif isinstance(element, Outcome):
             element_table = self.outcome_table
         else:
-            raise RuntimeError('get_unique_element')
+            raise RuntimeError('_get_unique_element')
 
         # retrieve or register element.
         if element.name in element_table:
@@ -31,14 +31,14 @@ class Dataflow(object):
             element_table[element.name] = element
             return element
 
-    def build_DAG(self):
+    def _build_DAG(self):
         for src, dst in self.rules:
-            src = self.get_unique_element(src)
-            dst = self.get_unique_element(dst)
+            src = self._get_unique_element(src)
+            dst = self._get_unique_element(dst)
             if isinstance(src, Entity) and isinstance(dst, Entity):
                 # transform `EntityA --> EntityB` to
                 # `EntityA --> [EntityA]` and `[EntityA] --> EntityB`.
-                outcome = self.get_unique_element(Outcome(src.name))
+                outcome = self._get_unique_element(Outcome(src.name))
                 src.add_outcome(outcome)
                 outcome.add_entity(dst)
             elif isinstance(src, Entity) and isinstance(dst, Outcome):
@@ -48,9 +48,9 @@ class Dataflow(object):
                 # add entity to outcome.
                 src.add_entity(dst)
             else:
-                raise RuntimeError('build_DAG')
+                raise RuntimeError('_build_DAG')
 
-    def topology_sort(self):
+    def _topology_sort(self):
         # color for DFS search.
         WHITE = 0
         GRAY = 1
@@ -65,25 +65,33 @@ class Dataflow(object):
 
         # result of topology search.
         self.linear_ordering = []
+        self.roots = set()
 
         def DFS_visit(u):
             color[u] = GRAY
             for v in u.get_adjacent_vertices():  # explore edge (u, v)
+                # remove `v` from `self.roots` if exists.
+                if color[v] in [WHITE, BLACK] and v in self.roots:
+                    self.roots.remove(v)
+                # recursive search.
                 if color[v] == WHITE:
                     DFS_visit(v)
                 elif color[v] == GRAY:
                     # discover back edge.
                     raise RuntimeError(
                         'Detected back edge: {0} to {1}.'.format(u, v))
+
             color[u] = BLACK
             self.linear_ordering.insert(0, u)
 
         # DFS.
         for u in color.keys():
             if color[u] == WHITE:
+                # add `u` as root node condidate.
+                self.roots.add(u)
                 DFS_visit(u)
 
-    def generate_linear_ordering(self):
-        self.build_DAG()
-        self.topology_sort()
-        return self.linear_ordering
+    def analyze(self):
+        self._build_DAG()
+        self._topology_sort()
+        return self.linear_ordering, self.roots
