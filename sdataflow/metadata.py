@@ -8,7 +8,7 @@ Information describing the project.
 package = 'sdataflow'
 project = 'sdataflow'
 project_no_spaces = project.replace(' ', '')
-version = '0.2'
+version = '0.2.1'
 description = ('A simple language to describe dataflow between entries, '
                'implemented in Python.')
 authors = ['Zhan Haoxun']
