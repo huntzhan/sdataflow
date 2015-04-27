@@ -4,7 +4,7 @@ from __future__ import (division, absolute_import, print_function,
 
 
 from sdataflow.lang import parse
-from sdataflow.scheduler import hook_callbacks, scheduler, create_data_wrapper
+from sdataflow.callback import hook_callbacks, scheduler, create_data_wrapper
 
 
 def run(doc, name_callback_mapping):

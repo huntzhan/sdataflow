@@ -5,7 +5,7 @@ from __future__ import (division, absolute_import, print_function,
 import sys
 import pytest
 from sdataflow.shared import Entity, Outcome
-from sdataflow.scheduler import hook_callbacks
+from sdataflow.callback import hook_callbacks
 
 
 def callback_generator(name):

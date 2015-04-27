@@ -4,7 +4,7 @@ from __future__ import (division, absolute_import, print_function,
 
 from sdataflow import metadata
 from sdataflow.lang import parse
-from sdataflow.scheduler import hook_callbacks, scheduler
+from sdataflow.callback import hook_callbacks, scheduler
 
 
 __all__ = ['DataflowHandler']
