@@ -122,7 +122,12 @@ After install `sdataflow` through `pip`, user can invoke a command-line program 
 
 ```
 Usage:
-    sdataflow <file>
+    sdataflow [-m <mode>] <file>
+
+Options:
+    -m <mode>  <mode> could be 1, 2 or 3. `-m1` is default mode; `-m2` prints
+               outcome as text of link; `-m3` ignore outcomes.
+
 ```
 
 User could pass the file path of datafow definition to `sdataflow`, then the program will parse the file, analyse the dataflow and finally generate a html file. Ues a browser to open such html file(based on project [mermaid][2]), and then, you get a graphic representation of your dataflow!
@@ -143,6 +148,24 @@ example.html example.sd
 Ues a browser to open `example.html`:
 
 ![screen shot 2015-04-28 at 12 02 58 am](https://cloud.githubusercontent.com/assets/5213906/7351794/03ade3b2-ed3a-11e4-9032-e859458857dd.png)
+
+Besides, `sdataflow` currently provides three different modes for graph generating:
+
+```
+$ sdataflow -m1 example.sd 
+$ sdataflow -m2 example.sd
+$ sdataflow -m3 example.sd
+```
+
+`-m1` mode is equivalent to omitting the `-m` option; `-m2` would present outcome as the text of link instead of a node; `-m3` would simply ignore outcome.
+
+`-m2` mode of above example:
+
+![screen shot 2015-04-28 at 3 51 15 pm](https://cloud.githubusercontent.com/assets/5213906/7364954/889bcd26-edbe-11e4-9ee2-4edd5fa859ca.png)
+
+`-m3` mode of above example:
+
+![screen shot 2015-04-28 at 3 51 34 pm](https://cloud.githubusercontent.com/assets/5213906/7364957/8bb46e8c-edbe-11e4-877b-0847b327ce9c.png)
 
 [2]: https://github.com/knsv/mermaid
 
