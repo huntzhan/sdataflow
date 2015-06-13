@@ -1,0 +1,8 @@
+Usage:
+  sdataflow [-m <mode>] <file>
+
+Options:
+  -m <mode> [default: "1"]  # <mode> could be 1, 2 or 3.
+                            # `-m1` is the default mode;
+                            # `-m2` prints outcome as text of link;
+                            # `-m3` ignore outcomes.

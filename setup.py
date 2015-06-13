@@ -273,7 +273,6 @@ setup_dict = dict(
         # dependencies of sdataflow.
         'ply',
         'six',
-        'docopt',
     ],
     cmdclass={'test': TestAllCommand},
     zip_safe=False,  # don't use eggs

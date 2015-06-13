@@ -4,9 +4,10 @@ from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
 import os
+import sys
 from io import open
-from docopt import docopt
 from .metadata import version
+from .synopsis import clidoc
 from sdataflow.lang import parse
 from sdataflow.debug.mermaid_page import (
     MODE_DEFAULT, MODE_OUTCOME_AS_LINK_TEXT, MODE_IGNORE_OUTCOME,
@@ -14,18 +15,8 @@ from sdataflow.debug.mermaid_page import (
 )
 
 
-DOC = '''
-Usage:
-    sdataflow [-m <mode>] <file>
-
-Options:
-    -m <mode>  <mode> could be 1, 2 or 3. `-m1` is default mode; `-m2` prints
-               outcome as text of link; `-m3` ignore outcomes.
-'''
-
-
 def entry_point():
-    arguments = docopt(DOC, version=version)
+    arguments = clidoc(sys.argv)
     mode_mapping = {
         '1': MODE_DEFAULT,
         '2': MODE_OUTCOME_AS_LINK_TEXT,
